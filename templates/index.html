@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: "Inter";
+            background-color: black;
+            margin: 0;
+            color: white;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #eee;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .logo{
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .github{
+            margin-right: 20px;
+            font-size: 18px;
+        }
+
+        .heading {
+            font-weight: bold;
+            font-size: 30px;
+            margin-top: 100px;
+        }
+
+        .heading1 {
+            font-weight: bold;
+            font-size: 30px;
+            margin-top: 50px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            margin-top: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        label {
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input,
+        textarea {
+            border: 3px solid #eee;
+            padding: .4em 1em;
+            border-radius: 6px;
+        }
+
+        form {
+            display: grid;
+            grid-row-gap: 10px;
+            justify-content: center;
+        }
+
+        .button {
+            margin-top: 10px;
+            background: #133EF5;
+            color: #fff;
+            padding: 10px 0;
+            border: 0;
+            border-radius: 6px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <ul>
+        <li class="logo"><a href="/">UploadX</a></li>
+        <li class="github"><a href="https://github.com/psankhe28/minio-demo" target="_blank"><i class="fa fa-github"></i>&nbsp;&nbsp;GitHub</a></li>
+    </ul>
+    <div class="container">
+        <h3 class="heading">Upload A File</h3>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="file">
+            <input type="submit" value="Upload" class="button">
+        </form>
+        <div id="uploadStatus"></div>
+        <hr>
+        <h3 class="heading1">Download a file from MinIO</h3>
+            <form id="downloadForm">
+                <input type="text" id="filenameInput" name="filename" placeholder="Enter file name">
+                <input type="submit" value="Download" class="button">
+            </form>
+            <div id="downloadStatus"></div>
+    </div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('uploadStatus').innerText = data.message;
+                    // Clear the file input after upload
+                    document.getElementById('fileInput').value = '';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        document.getElementById('downloadForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var filename = document.getElementById('filenameInput').value;
+
+            // Redirect to download URL
+            window.location.href = '/download/' + encodeURIComponent(filename);
+        });
+    </script>
+</body>
+
+</html>
